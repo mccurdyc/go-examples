@@ -1,6 +1,10 @@
 package main
 
-import "flag"
+import (
+	"flag"
+
+	"github.com/mccurdyc/go-examples/example2/transports/http/service"
+)
 
 // global variables
 var (
@@ -15,6 +19,6 @@ func init() {
 
 func main() {
 	// pass in the value of serverHost and serverPort
-	s := server.NewService(*serverHost, *serverPort)
+	s := service.NewService(*serverHost, *serverPort)
 	s.Start()
 }
