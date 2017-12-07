@@ -39,6 +39,7 @@ func (s *Service) Start() {
 
 	// lets actually log this
 	r.Handle("/three", middleware.Log(http.HandlerFunc(handlers.Three)))
+	r.Handle("/four", middleware.Log(http.HandlerFunc(handlers.Four)))
 
 	http.Handle("/", r)
 

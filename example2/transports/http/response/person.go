@@ -1,5 +1,11 @@
 package response
 
+var People []Person
+
+type PersonResponse struct {
+	data []Person `json:"data"`
+}
+
 type Person struct {
 	Name string `json:"name"`
 	Age  int    `json:"age"`

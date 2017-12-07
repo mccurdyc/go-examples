@@ -21,6 +21,7 @@ func Log(next http.Handler) http.Handler {
 		log.Println("Request: %+v", string(reqDump))
 
 		// lets also log it to a file
+
 		next.ServeHTTP(w, r)
 	})
 }
