@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"log"
 
 	"github.com/mccurdyc/go-examples/example2/transports/http/service"
 )
@@ -20,5 +21,6 @@ func init() {
 func main() {
 	// pass in the value of serverHost and serverPort
 	s := service.NewService(*serverHost, *serverPort)
+	log.Printf("started server on %s:%d", *serverHost, *serverPort)
 	s.Start()
 }
