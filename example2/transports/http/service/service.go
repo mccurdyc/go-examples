@@ -8,6 +8,7 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/mccurdyc/go-examples/example2/transports/http/handlers"
+	"github.com/mccurdyc/go-examples/example2/transports/http/middleware"
 )
 
 type Service struct {
@@ -35,7 +36,10 @@ func (s *Service) Start() {
 
 	r.HandleFunc("/one", handlers.One)
 	r.HandleFunc("/two/{/name}", handlers.Two)
-	r.HandleFunc("/three", handlers.Three)
+
+	// lets actually log this
+	r.Handle("/three", middleware.Log(http.HandlerFunc(handlers.Three)))
+
 	http.Handle("/", r)
 
 	if err := s.Server.ListenAndServe(); err != nil {
