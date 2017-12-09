@@ -1,3 +1,10 @@
+/*
+* @author Colton J. McCurdy
+*	GitHub: mccurdyc
+* Email:  mccurdyc22@gmail.com
+* Date: 2017-12-11
+ */
+
 package response
 
 type PersonResponse struct {
