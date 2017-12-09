@@ -1,6 +1,15 @@
+/*
+* @author Colton J. McCurdy
+*	GitHub: mccurdyc
+* Email:  mccurdyc22@gmail.com
+* Date: 2017-12-11
+*
+*  usage:
+*  go test -v
+*  go test -v -run=XXX
+ */
+
 // package is the same as what we are testing
-// go test -v
-// go test -v -run=XXX
 package main
 
 import (

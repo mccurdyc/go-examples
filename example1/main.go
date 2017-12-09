@@ -1,3 +1,19 @@
+/*
+* @author Colton J. McCurdy
+*	GitHub: mccurdyc
+* Email:  mccurdyc22@gmail.com
+* Date: 2017-12-11
+*
+*  usage:
+*  go run main.go
+*
+*  OR
+*
+*  go build
+*  ./example1
+*
+ */
+
 // the first statement must be a package name.
 // all files in a package must use the same package name
 package main
@@ -33,7 +49,6 @@ func add(x int, y int) int {
 
 // divide returns the integer result of dividing x by y
 // and returns an error if y is zero
-// explicity state the return types
 func divide(x int, y int) (int, error) {
 	if y == 0 {
 		// we return 0 because this is the nil value of int
