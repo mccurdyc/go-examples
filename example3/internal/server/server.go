@@ -1,0 +1,45 @@
+package server
+
+import (
+	"fmt"
+	"net/http"
+	"time"
+
+	"github.com/gorilla/mux"
+
+	"github.com/mccurdyc/websocket-example/internal/connections"
+	"github.com/mccurdyc/websocket-example/internal/handlers"
+	"github.com/mccurdyc/websocket-example/middleware"
+)
+
+type Service struct {
+	Launched time.Time
+	Server   http.Server
+}
+
+func NewService(host string, port int) *Service {
+	addr := fmt.Sprintf("%s:%d", host, port)
+
+	return &Service{
+		Launched: time.Now(),
+		Server: http.Server{
+			Addr:         addr,
+			ReadTimeout:  5 * time.Second,
+			WriteTimeout: 5 * time.Second,
+		},
+	}
+}
+
+func (s *Service) Start() {
+	cp := connections.NewConnectionPool()
+	r := mux.NewRouter()
+
+	// use middleware for handling connections - http://www.alexedwards.net/blog/making-and-using-middleware
+	r.Handle("/chat", middleware.Connect(handlers.Chat(cp), cp))
+	r.PathPrefix("/").Handler(http.FileServer(http.Dir("public")))
+	http.Handle("/", r)
+
+	if err := s.Server.ListenAndServe(); err != nil {
+		panic(err)
+	}
+}
