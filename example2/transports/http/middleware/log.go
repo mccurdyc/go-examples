@@ -23,11 +23,11 @@ func (sl *statusLogger) WriteHeader(code int) {
 func Log(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		// call the handler function
 		sl := &statusLogger{
 			ResponseWriter: w,
 		}
 
+		// call the handler function
 		next.ServeHTTP(sl, r)
 
 		// check if file exists, if not, create it and append to it - file permission 600
@@ -39,6 +39,7 @@ func Log(next http.Handler) http.Handler {
 
 		defer file.Close()
 
+		// yes, you have to use this specific time if you want to use Format()
 		line := fmt.Sprintf("%v %s %d %s\n", time.Now().Format("2006-01-02 15:04:05.999"), r.RequestURI, sl.status, r.Method)
 
 		if _, err := file.Write([]byte(line)); err != nil {
