@@ -1,13 +1,11 @@
 package response
 
-var People []Person
-
 type PersonResponse struct {
 	data []Person `json:"data"`
 }
 
 type Person struct {
-	Name string `json:"name"`
+	Name string `json:"name"` // we will use this for encoding and decoding
 	Age  int    `json:"age"`
 }
 

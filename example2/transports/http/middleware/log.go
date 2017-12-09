@@ -4,24 +4,45 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"net/http/httputil"
+	"os"
+	"time"
+
+	"github.com/pkg/errors"
 )
+
+type statusLogger struct {
+	status int
+	http.ResponseWriter
+}
+
+func (sl *statusLogger) WriteHeader(code int) {
+	sl.status = code
+	sl.ResponseWriter.WriteHeader(code)
+}
 
 func Log(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		reqDump, err := httputil.DumpRequest(r, true)
 
-		if err != nil {
-			// throw a 500
-			http.Error(w, fmt.Sprint(err), http.StatusInternalServerError)
-			return
+		// call the handler function
+		sl := &statusLogger{
+			ResponseWriter: w,
 		}
 
-		// casting a []byte to a string
-		log.Println("Request: %+v", string(reqDump))
+		next.ServeHTTP(sl, r)
 
-		// lets also log it to a file
+		// check if file exists, if not, create it and append to it - file permission 600
+		file, err := os.OpenFile("logs", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
 
-		next.ServeHTTP(w, r)
+		if err != nil {
+			log.Fatalf(errors.Wrap(err, "error opening file\n").Error())
+		}
+
+		defer file.Close()
+
+		line := fmt.Sprintf("%v %s %d %s\n", time.Now().Format("2006-01-02 15:04:05.999"), r.RequestURI, sl.status, r.Method)
+
+		if _, err := file.Write([]byte(line)); err != nil {
+			log.Printf(errors.Wrap(err, "error writing logs to file\n").Error())
+		}
 	})
 }
