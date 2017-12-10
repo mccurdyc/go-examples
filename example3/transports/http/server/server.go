@@ -7,9 +7,9 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"github.com/mccurdyc/websocket-example/internal/connections"
-	"github.com/mccurdyc/websocket-example/internal/handlers"
-	"github.com/mccurdyc/websocket-example/middleware"
+	"github.com/mccurdyc/go-examples/example3/middleware"
+	"github.com/mccurdyc/go-examples/example3/transports/http/connections"
+	"github.com/mccurdyc/go-examples/example3/transports/http/handlers"
 )
 
 type Service struct {

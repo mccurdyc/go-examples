@@ -4,7 +4,7 @@ import (
 	"flag"
 	"log"
 
-	"github.com/mccurdyc/websocket-example/internal/server"
+	"github.com/mccurdyc/go-examples/example3/transports/http/server"
 )
 
 var (

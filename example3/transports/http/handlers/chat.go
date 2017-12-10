@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/mccurdyc/websocket-example/internal/connections"
+	"github.com/mccurdyc/go-examples/example3/transports/http/connections"
 )
 
 func Chat(cp *connections.ConnectionPool) http.Handler {
