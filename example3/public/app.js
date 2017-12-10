@@ -1,11 +1,12 @@
 var ws = new WebSocket('ws://' + window.location.host + '/chat');
-var username = String(Math.floor(Math.random() * 1000000000000));
+var initialUsername = String(Math.floor(Math.random() * 1000000000000));
 
+var username = document.getElementById("username");
 var messageHistory = document.getElementById('history');
 var send = document.getElementById("send");
 var message = document.getElementById("message");
 
-document.getElementById("username").innerHTML = username;
+username.value = initialUsername;
 
 ws.addEventListener('open', function(e) {
   console.log("connected");
@@ -24,7 +25,7 @@ ws.addEventListener('message', function(e) {
 send.addEventListener("click", function(e) {
   ws.send(
     JSON.stringify({
-      username: username,
+      username: username.value,
       message: message.value
     })
   );
