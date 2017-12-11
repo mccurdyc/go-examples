@@ -9,7 +9,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -20,15 +19,13 @@ import (
 // in the request body. It then takes this
 // and adds it to the global array of people.
 func Four(w http.ResponseWriter, r *http.Request) {
-	var p response.Person
-
-	fmt.Printf("Request: %+v\n", r)
+	p := response.NewPerson()
 
 	// create a new json decoder
 	decoder := json.NewDecoder(r.Body)
 
 	// wait until the surrounding function returns
-	defer req.Body.Close()
+	defer r.Body.Close()
 
 	// decode into a struct
 	if err := decoder.Decode(&p); err != nil {
@@ -38,9 +35,7 @@ func Four(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Printf("Person: %+v\n", p)
-
-	r.Body.Close() // we can also use a defer instead
+	log.Printf("Person: %+v\n", p)
 
 	w.WriteHeader(http.StatusOK)
 	return
