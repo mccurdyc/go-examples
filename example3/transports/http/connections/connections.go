@@ -19,7 +19,7 @@ type ConnectionHub struct {
 	clients map[*websocket.Conn]bool
 
 	// history of previous messages for new clients
-	history []Message
+	history *[]Message
 
 	// channel for previous message history
 	stream chan Message
@@ -34,15 +34,18 @@ func NewConnectionHub() *ConnectionHub {
 
 	// goroutine for adding messages to history
 	go func() {
+		fmt.Println("starting goroutine for listening for history")
 		for {
 			m := <-s
+			fmt.Printf("received message for history: %+v\n", m)
 			h = append(h, m)
+			fmt.Printf("history now: %+v\n", h)
 		}
 	}()
 
 	return &ConnectionHub{
 		clients:   make(map[*websocket.Conn]bool),
-		history:   h,
+		history:   &h,
 		broadcast: make(chan Message),
 		stream:    s,
 	}
@@ -72,6 +75,9 @@ func (chub *ConnectionHub) HandleConnection(w http.ResponseWriter, r *http.Reque
 	// add the websocket connection to the pool of connections
 	chub.add(conn)
 
+	chub.WriteHistory(conn)
+	fmt.Println("Wrote history")
+
 	// handle reading new messages in its own thread
 	go chub.ReadMessages(conn)
 
@@ -93,6 +99,7 @@ func (chub *ConnectionHub) ReadMessages(c *websocket.Conn) {
 
 		fmt.Printf("reading message: %+v\n", msg)
 		chub.broadcast <- msg
+		fmt.Printf("adding message to stream: %+v\n", msg)
 		chub.stream <- msg
 	}
 }
@@ -116,6 +123,25 @@ func (chub *ConnectionHub) WriteMessage() {
 				log.Println(errors.Wrap(err, "error writing message to all clients"))
 				return
 			}
+		}
+	}
+}
+
+func (chub *ConnectionHub) WriteHistory(c *websocket.Conn) {
+	fmt.Printf("All history: %+v\n", chub.history)
+	for _, m := range *chub.history {
+		fmt.Printf("History: %+v\n", m)
+
+		out, err := json.Marshal(m)
+		if err != nil {
+			log.Println(errors.Wrap(err, "error encoding json"))
+			return
+		}
+
+		if err := c.WriteMessage(websocket.TextMessage, out); err != nil {
+			delete(chub.clients, c)
+			log.Println(errors.Wrap(err, "error writing message to client"))
+			return
 		}
 	}
 }
