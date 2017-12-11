@@ -28,8 +28,6 @@ func Three(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(p)
 	}
 
-	// name := r.Form["name"]
-	// https://golang.org/pkg/net/http/#Request.FormValue
 	name := r.FormValue("name")
 	// log.Printf("%+v", r)
 	p = response.FindPersonByName(name, people)

@@ -28,7 +28,7 @@ func Four(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 
 	// wait until the surrounding function returns
-	// defer req.Body.Close()
+	defer req.Body.Close()
 
 	// decode into a struct
 	if err := decoder.Decode(&p); err != nil {
