@@ -32,6 +32,7 @@ func NewConnectionHub() *ConnectionHub {
 	var h = []Message{}
 	var s = make(chan Message)
 
+	// goroutine for adding messages to history
 	go func() {
 		for {
 			m := <-s
@@ -70,6 +71,7 @@ func (chub *ConnectionHub) HandleConnection(w http.ResponseWriter, r *http.Reque
 
 	// add the websocket connection to the pool of connections
 	chub.add(conn)
+
 	// handle reading new messages in its own thread
 	go chub.ReadMessages(conn)
 
@@ -98,20 +100,22 @@ func (chub *ConnectionHub) ReadMessages(c *websocket.Conn) {
 // WriteMessage handles writing a message received
 // in the broadcast channel to all of the clients
 func (chub *ConnectionHub) WriteMessage() {
-	msg := <-chub.broadcast
-	fmt.Printf("writing message: %+v\n", msg)
+	for {
+		msg := <-chub.broadcast
+		fmt.Printf("writing message: %+v\n", msg)
 
-	out, err := json.Marshal(msg)
-	if err != nil {
-		log.Println(errors.Wrap(err, "error encoding json"))
-		return
-	}
-
-	for c := range chub.clients {
-		if err := c.WriteMessage(websocket.TextMessage, out); err != nil {
-			delete(chub.clients, c)
-			log.Println(errors.Wrap(err, "error writing message to all clients"))
+		out, err := json.Marshal(msg)
+		if err != nil {
+			log.Println(errors.Wrap(err, "error encoding json"))
 			return
+		}
+
+		for c := range chub.clients {
+			if err := c.WriteMessage(websocket.TextMessage, out); err != nil {
+				delete(chub.clients, c)
+				log.Println(errors.Wrap(err, "error writing message to all clients"))
+				return
+			}
 		}
 	}
 }
