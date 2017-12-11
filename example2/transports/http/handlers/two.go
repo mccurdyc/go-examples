@@ -21,7 +21,7 @@ func Two(w http.ResponseWriter, r *http.Request) {
 
 	// a map of route variables
 	vars := mux.Vars(r)
-	s := fmt.Sprintf("hello, %s", vars["name"])
+	s := fmt.Sprintf("hello, %s\n", vars["name"])
 
 	io.WriteString(w, s)
 }

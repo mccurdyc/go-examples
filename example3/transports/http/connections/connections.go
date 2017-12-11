@@ -18,14 +18,32 @@ type Message struct {
 type ConnectionHub struct {
 	clients map[*websocket.Conn]bool
 
+	// history of previous messages for new clients
+	history []Message
+
+	// channel for previous message history
+	stream chan Message
+
 	// bi-directional channel
 	broadcast chan Message
 }
 
 func NewConnectionHub() *ConnectionHub {
+	var h = []Message{}
+	var s = make(chan Message)
+
+	go func() {
+		for {
+			m := <-s
+			h = append(h, m)
+		}
+	}()
+
 	return &ConnectionHub{
 		clients:   make(map[*websocket.Conn]bool),
-		broadcast: make(chan Message, 3),
+		history:   h,
+		broadcast: make(chan Message),
+		stream:    s,
 	}
 }
 
@@ -73,6 +91,7 @@ func (chub *ConnectionHub) ReadMessages(c *websocket.Conn) {
 
 		fmt.Printf("reading message: %+v\n", msg)
 		chub.broadcast <- msg
+		chub.stream <- msg
 	}
 }
 
@@ -83,7 +102,6 @@ func (chub *ConnectionHub) WriteMessage() {
 	fmt.Printf("writing message: %+v\n", msg)
 
 	out, err := json.Marshal(msg)
-
 	if err != nil {
 		log.Println(errors.Wrap(err, "error encoding json"))
 		return

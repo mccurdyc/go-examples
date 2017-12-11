@@ -9,8 +9,7 @@ import (
 
 func Chat(chub *connections.ConnectionHub) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Println("writing message")
-
-		chub.WriteMessage()
+		go chub.WriteMessage()
+		log.Println("wrote message")
 	})
 }
