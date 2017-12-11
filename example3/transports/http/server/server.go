@@ -31,11 +31,11 @@ func NewService(host string, port int) *Service {
 }
 
 func (s *Service) Start() {
-	cp := connections.NewConnectionPool()
+	chub := connections.NewConnectionHub()
 	r := mux.NewRouter()
 
 	// use middleware for handling connections - http://www.alexedwards.net/blog/making-and-using-middleware
-	r.Handle("/chat", middleware.Connect(handlers.Chat(cp), cp))
+	r.Handle("/chat", middleware.Connect(handlers.Chat(chub), chub))
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("public")))
 	http.Handle("/", r)
 

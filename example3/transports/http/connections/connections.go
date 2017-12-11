@@ -15,28 +15,28 @@ type Message struct {
 	Message  string `json:"message"`
 }
 
-type ConnectionPool struct {
+type ConnectionHub struct {
 	clients map[*websocket.Conn]bool
 
 	// bi-directional channel
 	broadcast chan Message
 }
 
-func NewConnectionPool() *ConnectionPool {
-	return &ConnectionPool{
+func NewConnectionHub() *ConnectionHub {
+	return &ConnectionHub{
 		clients:   make(map[*websocket.Conn]bool),
 		broadcast: make(chan Message, 3),
 	}
 }
 
-func (cp *ConnectionPool) add(c *websocket.Conn) {
-	cp.clients[c] = true
+func (chub *ConnectionHub) add(c *websocket.Conn) {
+	chub.clients[c] = true
 	return
 }
 
 // HandleConnection handles upgrading an http
 // connection to a websocket connection.
-func (cp *ConnectionPool) HandleConnection(w http.ResponseWriter, r *http.Request) {
+func (chub *ConnectionHub) HandleConnection(w http.ResponseWriter, r *http.Request) {
 	var u = websocket.Upgrader{
 		ReadBufferSize:  1024,
 		WriteBufferSize: 1024,
@@ -51,35 +51,35 @@ func (cp *ConnectionPool) HandleConnection(w http.ResponseWriter, r *http.Reques
 	}
 
 	// add the websocket connection to the pool of connections
-	cp.add(conn)
+	chub.add(conn)
 	// handle reading new messages in its own thread
-	go cp.ReadMessages(conn)
+	go chub.ReadMessages(conn)
 
 	return
 }
 
 // ReadMessages runs indefinitely reading in and parsing
-// messages and sending them to the connection pool's
+// messages and sending them to the connection hub's
 // broadcast channel so that other connection can access them.
-func (cp *ConnectionPool) ReadMessages(c *websocket.Conn) {
+func (chub *ConnectionHub) ReadMessages(c *websocket.Conn) {
 	for {
 		var msg Message
 
 		if err := c.ReadJSON(&msg); err != nil {
 			log.Println(errors.Wrap(err, "error reading/parsing message from websocket"))
-			delete(cp.clients, c)
+			delete(chub.clients, c)
 			return
 		}
 
 		fmt.Printf("reading message: %+v\n", msg)
-		cp.broadcast <- msg
+		chub.broadcast <- msg
 	}
 }
 
 // WriteMessage handles writing a message received
 // in the broadcast channel to all of the clients
-func (cp *ConnectionPool) WriteMessage() {
-	msg := <-cp.broadcast
+func (chub *ConnectionHub) WriteMessage() {
+	msg := <-chub.broadcast
 	fmt.Printf("writing message: %+v\n", msg)
 
 	out, err := json.Marshal(msg)
@@ -89,9 +89,9 @@ func (cp *ConnectionPool) WriteMessage() {
 		return
 	}
 
-	for c := range cp.clients {
+	for c := range chub.clients {
 		if err := c.WriteMessage(websocket.TextMessage, out); err != nil {
-			delete(cp.clients, c)
+			delete(chub.clients, c)
 			log.Println(errors.Wrap(err, "error writing message to all clients"))
 			return
 		}
