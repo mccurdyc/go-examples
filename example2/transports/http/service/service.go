@@ -42,7 +42,7 @@ func (s *Service) Start() {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/one", handlers.One)
-	r.HandleFunc("/two/{/name}", handlers.Two)
+	r.HandleFunc("/two/{name}", handlers.Two)
 
 	// lets actually log this
 	r.Handle("/three", middleware.Log(http.HandlerFunc(handlers.Three)))
