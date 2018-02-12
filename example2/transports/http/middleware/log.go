@@ -2,7 +2,7 @@
 * @author Colton J. McCurdy
 *	GitHub: mccurdyc
 * Email:  mccurdyc22@gmail.com
-* Date: 2017-12-11
+* Date: 2018-02-15
  */
 
 package middleware
@@ -27,6 +27,8 @@ func (sl *statusLogger) WriteHeader(code int) {
 	sl.ResponseWriter.WriteHeader(code)
 }
 
+// Log will handle writing the request to a file. The log for a request will include
+// the route requested, the request method and the HTTP status code.
 func Log(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 

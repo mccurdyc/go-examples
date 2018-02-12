@@ -1,11 +1,11 @@
+package service
+
 /*
 * @author Colton J. McCurdy
 *	GitHub: mccurdyc
 * Email:  mccurdyc22@gmail.com
-* Date: 2017-12-11
+* Date: 2018-02-15
  */
-
-package service
 
 import (
 	"fmt"
@@ -18,6 +18,7 @@ import (
 	"github.com/mccurdyc/go-examples/example2/transports/http/middleware"
 )
 
+// Service will host the server and the time when it started.
 type Service struct {
 	Launched time.Time
 	Server   http.Server
@@ -38,6 +39,9 @@ func NewService(host string, port int) *Service {
 	}
 }
 
+// Start will register the routes with the appropriate handler functions and
+// serve on the port specified by the PORT environment variable and will default
+// to 8080 if not set.
 func (s *Service) Start() {
 	r := mux.NewRouter()
 

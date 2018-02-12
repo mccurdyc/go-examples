@@ -1,16 +1,15 @@
+package main
+
 /*
 * @author Colton J. McCurdy
 *	GitHub: mccurdyc
 * Email:  mccurdyc22@gmail.com
-* Date: 2017-12-11
+* Date: 2018-02-15
 *
 *  usage:
 *  go test -v
 *  go test -v -run=XXX
  */
-
-// package is the same as what we are testing
-package main
 
 import (
 	"errors"

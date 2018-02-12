@@ -1,11 +1,11 @@
+package handlers
+
 /*
 * @author Colton J. McCurdy
 *	GitHub: mccurdyc
 * Email:  mccurdyc22@gmail.com
-* Date: 2017-12-11
+* Date: 2018-02-15
  */
-
-package handlers
 
 import (
 	"io"

@@ -1,4 +1,4 @@
-# example3
+# example2
 
 ## Obtaining the Dependencies
 
@@ -19,10 +19,10 @@ $ dep ensure -v
 
 ## Build Static Binary
 
-To build the single, static, binary for example3, run the following in `example3/`:
+To build the single, static, binary for example2, run the following in `example2/`:
 
 ```
-$ go build -o bin/example3
+$ go build -o bin/example2
 ```
 
 This should create an executable binary in the local `bin` directory.
@@ -32,14 +32,69 @@ This should create an executable binary in the local `bin` directory.
 To run the built binary, use the following:
 
 ```
-$ ./bin/example3
+$ ./bin/example2
 ```
 
 This should produce something similar to the following output:
 
 ```
 2018/02/11 21:06:30 started server on localhost:8080
-starting goroutine for listening for history
 ```
 
-Then, open your browser and visit `localhost:8080`
+## API Documentation
+
+The following are the accepted methods and routes for our server:
+
+**GET** `/one`
+
+Example:
+
+```
+curl localhost:8080/one
+```
+
+Output:
+
+```
+hello, world!
+```
+
+**GET** `/two/{name}`
+
+Example:
+
+```
+curl localhost:8080/two/Colton
+```
+
+Output:
+
+```
+hello, Colton
+```
+
+**GET** `/three`
+
+Example:
+
+```
+curl localhost:8080/three?name=Colton
+```
+
+Output:
+
+```
+{"name":"Colton","age":22}
+```
+
+**POST** `/four`
+
+Example:
+
+```
+curl -X POST -d '{"name":"Colton", "age":22}' localhost:8080/four
+```
+
+Output:
+
+For this endpoint, the only output will be that logged to `logs`

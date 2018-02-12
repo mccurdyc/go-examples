@@ -1,4 +1,4 @@
-# example3
+# example1
 
 ## Obtaining the Dependencies
 
@@ -17,12 +17,31 @@ For this example, run the following to catch up on installing the dependencies.
 $ dep ensure -v
 ```
 
-## Build Static Binary
+## Testing example1
 
-To build the single, static, binary for example3, run the following in `example3/`:
+To testing example1, you will leverage the toolchain's `test` command, specifically with the following:
 
 ```
-$ go build -o bin/example3
+$ go test -v .
+```
+
+This should produce the following output:
+
+```
+=== RUN   TestAdd
+--- PASS: TestAdd (0.00s)
+=== RUN   TestDivide
+--- PASS: TestDivide (0.00s)
+PASS
+ok  	github.com/mccurdyc/go-examples/example1	0.008s
+```
+
+## Build Static Binary
+
+To build the single, static, binary for example1, run the following in `example1/`:
+
+```
+$ go build -o bin/example1
 ```
 
 This should create an executable binary in the local `bin` directory.
@@ -32,14 +51,13 @@ This should create an executable binary in the local `bin` directory.
 To run the built binary, use the following:
 
 ```
-$ ./bin/example3
+$ ./bin/example1
 ```
 
-This should produce something similar to the following output:
+This should produce the following output:
 
 ```
-2018/02/11 21:06:30 started server on localhost:8080
-starting goroutine for listening for history
+sum: 5
+quotient1: 4
+quotient2: error dividing by zero
 ```
-
-Then, open your browser and visit `localhost:8080`

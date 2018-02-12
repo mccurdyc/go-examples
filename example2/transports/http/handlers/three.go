@@ -1,11 +1,11 @@
+package handlers
+
 /*
 * @author Colton J. McCurdy
 *	GitHub: mccurdyc
 * Email:  mccurdyc22@gmail.com
-* Date: 2017-12-11
+* Date: 2018-02-15
  */
-
-package handlers
 
 import (
 	"encoding/json"
@@ -20,6 +20,8 @@ var people = []response.Person{
 	{Name: "Bob", Age: 54},
 }
 
+// Three will use a value passed in as a query paremeter to find a person by name
+// in the slice of people.
 func Three(w http.ResponseWriter, r *http.Request) {
 	p := response.NewPerson()
 
@@ -29,7 +31,6 @@ func Three(w http.ResponseWriter, r *http.Request) {
 	}
 
 	name := r.FormValue("name")
-	// log.Printf("%+v", r)
 	p = response.FindPersonByName(name, people)
 
 	json.NewEncoder(w).Encode(p)
