@@ -12,11 +12,13 @@ import (
 	"github.com/mccurdyc/go-examples/example3/transports/http/handlers"
 )
 
+// Service has a launched time and contains a Server.
 type Service struct {
 	Launched time.Time
 	Server   http.Server
 }
 
+// NewService creates a new Service with the launched time set and a server configured.
 func NewService(host string, port int) *Service {
 	addr := fmt.Sprintf("%s:%d", host, port)
 
@@ -30,6 +32,8 @@ func NewService(host string, port int) *Service {
 	}
 }
 
+// Start registers the necessary routes with their handler functions, then starts
+// listening for requests.
 func (s *Service) Start() {
 	chub := connections.NewConnectionHub()
 	r := mux.NewRouter()

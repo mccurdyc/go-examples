@@ -10,11 +10,17 @@ import (
 	"github.com/pkg/errors"
 )
 
+// Message is a message that will hold the username of the user who sent it
+// and the message itself.
 type Message struct {
 	Username string `json:"username"`
 	Message  string `json:"message"`
 }
 
+// ConnectionHub will hold all of the active connections in clients as well as
+// the historical messages sent so that when new users join, the messages persist.
+// Two channels are used, one for sending messages to history and one for sending
+// messages to other users.
 type ConnectionHub struct {
 	clients map[*websocket.Conn]bool
 
@@ -28,6 +34,7 @@ type ConnectionHub struct {
 	broadcast chan Message
 }
 
+// NewConnectionHub creates a new ConnectionHub.
 func NewConnectionHub() *ConnectionHub {
 	var h = []Message{}
 	var s = make(chan Message)
@@ -127,6 +134,7 @@ func (chub *ConnectionHub) WriteMessage() {
 	}
 }
 
+// WriteHistory writes a message to the in-memory history store.
 func (chub *ConnectionHub) WriteHistory(c *websocket.Conn) {
 	fmt.Printf("All history: %+v\n", chub.history)
 	for _, m := range *chub.history {
